@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+   <title>Google AJAX Language API - Basic Translation</title>
+   <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
+   <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/base/base.css" type="text/css">
+   <link rel="stylesheet" href="css/MooDialog.css" type="text/css">
+   <style type="text/css">
+   #ft{font-size:80%;color:#888;text-align:left;margin:2em 0;font-size: 12px}
+   #ft p a{color:#93C37D;}
+   html,body{font-family: helvetica,arial,sans-serif,verdana;color: #000}
+   h1{background:none repeat scroll 0 0 #447E40;color:#FFFFFF;padding:4px;text-align:center;font-size: 40px;-moz-border-radius:5px;-border-radius:5px;-webkit-border-radius:5px;}
+   label{font-weight: bold;}
+   #translated {opacity: 0;filter: alpha(opacity=0);}
+   #intro {line-height: 1.4em;font-size: 144%;margin-top: 5px;margin-bottom: 20px;color: #222;}
+   #results div{font-size: 25px;color: #444;margin-bottom: 10px}
+   #results span{background: #ffff00;color: #111;padding: 3px;font-weight: bold}
+   </style>
+</head>
+<body>
+<div id="doc2" class="yui-t7">
+   <div id="hd" role="banner"><h1>Detect Language and Translate in English</h1></div>
+   <div id="bd" role="main">
+    <p id="intro">Paste in text and hit the button "Detect Language"</p>
+    <form action="" method="get" id="f">
+     <div class="yui-g">
+      <div class="yui-u first">
+       <p><label for="input">Input: </label></p>
+       <p><textarea id="input" name="input" rows="10" cols="55"></textarea></p>
+       <p><input type="submit" value="Detect Language"></p>    
+      </div>
+      </form>
+      <div class="yui-u">
+       <div id="translated">
+        <p><label for="output">Output:</label></p>
+        <p><textarea id="output" name="output" rows="10" cols="55"></textarea></p>
+       </div>
+      </div>
+     </div>
+    </div>
+  <div id="results"></div>
+  <div id="branding"></div>
+  <div id="ft" role="contentinfo"><p>Created by @<a href="http://twitter.com/thinkphp">thinkphp</a> using <a href="http://code.google.com/apis/ajaxlanguage/documentation/reference.html">Google Translation API</a> | <a href="source.js" id="source">Source</a></p></div>
+</div>
+<script type="text/javascript" src="http://google.com/jsapi"></script>
+<script type="text/javascript">google.load("language", "1");google.load("mootools", "1.2.4");</script>
+<script type="text/javascript" src="http://github.com/thinkphp/MooDialog/raw/master/MooDialog.js"></script>
+<script type="text/javascript" src="http://github.com/thinkphp/MooDialog/raw/master/MooDialog.Request.js"></script>
+<script type="text/javascript" src="http://github.com/thinkphp/overlay/raw/master/source/overlay-yui-compressed.js"></script>
+<script type="text/javascript">
+ function initialize() {
+   google.language.getBranding('branding', {type: 'vertical'});
+   var form = document.id('f');
+       form.onsubmit = function() {
+            var text = document.id('input').get('value');
+                if($('results').hasChild('language')) {$('results').empty(); }
+                google.language.detect(text,function(result){
+                            if(!result.error) {
+                                var language = 'unknown';
+                                    for(var l in google.language.Languages) {
+                                        if(google.language.Languages[l] == result.language) {
+                                             language = l;
+                                             break;
+                                         } 
+                                     }
+                                 var div = new Element('div',{'id':'language'}).set('text','Language: ' + language).inject($('results'));
+                                 var span = new Element('span').set('text',result.isReliable ? '(reliable: ' + result.confidence + ')' : '(not reliable: '+ result.confidence +')' ).inject($('results'));
+                                     $('results').fade('hide');
+                                     $('results').fade(1);
+                                     translatedText(); 
+                              } else {
+                                     $('results').set('html','<span class="error">Error Detection!</span>');
+                                     $('results').fade('hide');
+                                     $('results').fade(1);
+                              }                                                     
+                });   
+        return false; 
+       }//end function
+
+       function translatedText() {
+            var input = document.id('input').get('value');
+                 google.language.translate(input,"","en",function(result){
+                        if(!result.error) {
+                          $('output').set('value',result.translation); 
+                          $('translated').fade('hide');
+                          $('translated').fade(1);
+                        } else {
+                          $('output').set('value',result.error.message);        
+                          $('translated').fade('hide');
+                          $('translated').fade(1);
+                        }
+                 });
+       };
+
+
+      $('source').addEvent('click',function(e){
+
+         if(e) {e.stop();} 
+
+         new MooDialog.Request(this.href,{evalScripts:false},{size: {width: 500,height: 400},title: 'Request source.js'});
+
+      });  
+ };
+ google.setOnLoadCallback(initialize);
+</script>
+</body>
+</html>

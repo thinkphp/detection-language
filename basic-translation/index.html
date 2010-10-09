@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>Google AJAX Language API - Basic Translation</title>
+   <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
+   <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/base/base.css" type="text/css">
+   <style type="text/css">
+   html,body{font-family: helvetica,arial,sans-serif,verdana;color: #000}
+   h1{background:none repeat scroll 0 0 #447E40;color:#FFFFFF;padding:14px;text-align:center;font-size: 40px;-moz-border-radius:5px;-border-radius:5px;-webkit-border-radius:5px;}
+   #ft{font-size:80%;color:#888;text-align:left;margin:2em 0;font-size: 12px}
+   #ft p a{color:#93C37D;}
+   </style>
+</head>
+<body>
+<div id="doc2" class="yui-t7">
+   <div id="hd" role="banner"><h1>Google AJAX Language API - Basic Translation</h1></div>
+   <div id="bd" role="main">
+	<div class="yui-g" id="detection">
+	</div>
+	</div>
+<div id="ft" role="contentinfo"><p>Created by @<a href="http://twitter.com/thinkphp">thinkphp</a> using <a href="http://code.google.com/apis/ajaxlanguage/documentation/reference.html">Google Translation API</a></p></div>
+</div>
+<script type="text/javascript" src="http://google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load("language", "1");
+    function initialize() {
+              var txt = "I then stumbled across 'Google's Ajax Translation API':http://code.google.com/apis/ajaxlanguage/documentation/ and thought it should be very easy to marry it with for example the JSON output of 'the twitter API' :http://groups.google.com/group/twitter-development-talk/web/api-documentation to add the correct lang attributes on the fly. ";
+              google.language.detect(txt, function(result){
+                            if(!result.error) {
+                                var language = 'unknown';
+                                    for(var l in google.language.Languages) {
+                                        if(google.language.Languages[l] == result.language) {
+                                             language = l;break;
+                                         } 
+                                     }
+                                 var container = document.getElementById('detection'); 
+                                    container.innerHTML = txt + " is <strong>" + language + "</strong><br/>"; 
+                              }
+
+              });           
+    };
+    google.setOnLoadCallback(initialize);
+</script>
+</body>
+</html>
